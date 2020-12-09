@@ -37,16 +37,65 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", (req, res) => {
-  // create a new category
+router.post("/", async (req, res) => {
+  // Create new category
+  try {
+    const categoryData = await Category.create(req.body);
+    res.status(200).json(categoryData);
+  } catch (err) {
+    res.status(400).json(err);
+    return;
+  }
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", async (req, res) => {
   // update a category by its `id` value
+  try {
+    const categoryData = await Category.update(
+      {
+        // Update category name
+        category_name: req.body.category_name,
+      },
+      {
+        // Return updated category
+        returning: true,
+        where: {
+          id: req.body.id,
+        },
+      }
+    );
+    // Check to see if a category was updated
+    if (!categoryData) {
+      res
+        .status("404")
+        .json({ message: "Category id not found. No update was made." });
+      return;
+    }
+
+    res.status(200).json(categoryData);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", async (req, res) => {
   // delete a category by its `id` value
+  try {
+    const categoryData = await Category.destroy({
+      where: {
+        id = req.params.id
+      }
+    });
+    // Check to see if category was found and delted
+    if(!categoryData){
+      res.status(404).json({message: "Category id not found. Nothing was deleted."})
+      return
+    }
+
+    res.status(200).json(categoryData)
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 module.exports = router;
