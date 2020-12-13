@@ -2,7 +2,6 @@ const router = require("express").Router();
 const { Category, Product } = require("../../models");
 
 // The `/api/categories` endpoint
-
 router.get("/", async (req, res) => {
   // find all categories
   try {
@@ -60,7 +59,7 @@ router.put("/:id", async (req, res) => {
         // Return updated category
         returning: true,
         where: {
-          id: req.body.id,
+          id: req.params.id,
         },
       }
     );
@@ -83,7 +82,7 @@ router.delete("/:id", async (req, res) => {
   try {
     const categoryData = await Category.destroy({
       where: {
-        id = req.params.id
+        id: req.params.id
       }
     });
     // Check to see if category was found and delted
